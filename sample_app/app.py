@@ -77,7 +77,7 @@ def upload_photo(api_key):
     option = input("Do you want to upload from [w]eb, or from [c]omputer?")
     if option == 'c':
         file_path = input('Input path to your file: ')
-        req = urllib.request.Request("http://localhost:8080/v2/upload_profile_image?api_key=" + api_key)
+        req = urllib.request.Request(address + "/v2/upload_profile_image?api_key=" + api_key)
         with open(file_path, 'rb') as file:
             req.data = file.read()
         urllib.request.urlopen(req)
