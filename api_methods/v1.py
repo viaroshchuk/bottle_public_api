@@ -107,7 +107,6 @@ def v1_auth():
 # http://config.server_host:config.server_port/v1/change_name?api_key=..&new_name=..
 # TODO: (maybe) add new param - password
 # TODO: api_key validation (length)
-# TODO: new_name validation: lenght and letters only!
 def v1_change_profile_name():
     """ Change profile_name for authenticated client
     2 GET params:
@@ -115,7 +114,7 @@ def v1_change_profile_name():
         new_name
     Returns:
         200 = profile_name(new_name)
-        400 = Missing new_name
+        400 = Missing new_name/Invalid name
         401 = Missing api_key or it's wrong
         500 = Duplicate profiles/Troubles with update query
     """
@@ -126,6 +125,14 @@ def v1_change_profile_name():
     if 'new_name' not in request.query:
         response.status = 400
         json.dumps({'status': '400', 'error': 'Missing new_name param.'})
+
+    if len(request.query.new_name) < 3:
+        response.status = 400
+        json.dumps({'status': '400', 'error': 'Name must consist at least 3 chars.'})
+
+    if all(x.isalpha() or x.isspace() for x in request.query.new_name):
+        response.status = 400
+        json.dumps({'status': '400', 'error': 'Name must consist only of letters.'})
 
     db_profile_info = exec_sql("SELECT * FROM profiles WHERE api_key='" + request.query.api_key + "'")
     if db_profile_info[0] == 1:  # Case 'api_key is okay'
