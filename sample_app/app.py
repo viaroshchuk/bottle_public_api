@@ -11,8 +11,8 @@ def register():
     password = getpass.getpass('Password: ')
     name = input('Your full name: ')
     try:
-        response = urllib.request.urlopen('http://localhost:8080/v1/register?login={}&password={}&name={}'
-                                          .format(login, password, name)).read()
+        response = urllib.request.urlopen('http://localhost:8080/v1/register?login={}&password={}&name='
+                                          .format(login, password) + urllib.parse.quote(name)).read()
 
         dict_response = json.loads(response.decode())
         print('Registration completed!\nYour login:', dict_response['login'])
