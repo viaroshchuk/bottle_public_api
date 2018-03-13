@@ -168,7 +168,8 @@ def v1_get_profile_data():
     db_profile_info = exec_sql("SELECT * FROM profiles WHERE api_key='" + request.query.api_key + "'")
 
     if db_profile_info[0] == 1:  # Case 'api_key is ok'
-        if 'profile_id' not in request.query:  # Case 'profile_id is not given' - fetch own data
+        if 'profile_id' not in request.query or request.query.profile_id.strip() == '':
+            # Case 'profile_id is not given' - fetch own data
             profile_data = db_profile_info[1][0]
             json_report = json.dumps({
                 'status': '200',
