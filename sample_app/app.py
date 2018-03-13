@@ -62,7 +62,7 @@ def get_profile_data(api_key):
 def change_name(api_key):
     new_name = input("Enter new name: ")
     try:
-        urllib.request.urlopen('http://localhost:8080/v1/change_profile_name?api_key=' + api_key + '&new_name=' +
+        response = urllib.request.urlopen('http://localhost:8080/v1/change_profile_name?api_key=' + api_key + '&new_name=' +
                                urllib.parse.quote(new_name)).read()
         print("Your name is changed now!")
     except urllib.error.HTTPError:

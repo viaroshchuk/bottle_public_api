@@ -127,21 +127,21 @@ def v1_change_profile_name():
 
     if 'new_name' not in request.query:
         response.status = 400
-        json.dumps({'status': '400', 'error': 'Missing new_name param.'})
+        return json.dumps({'status': '400', 'error': 'Missing new_name param.'})
 
     if len(request.query.new_name) < 3:
         response.status = 400
-        json.dumps({'status': '400', 'error': 'Name must consist at least 3 chars.'})
+        return json.dumps({'status': '400', 'error': 'Name must consist at least 3 chars.'})
 
-    if all(x.isalpha() or x.isspace() for x in request.query.new_name):
+    if not all(x.isalpha() or x.isspace() for x in request.query.new_name):
         response.status = 400
-        json.dumps({'status': '400', 'error': 'Name must consist only of letters.'})
+        return json.dumps({'status': '400', 'error': 'Name must consist only of letters.'})
 
     db_profile_info = exec_sql("SELECT * FROM profiles WHERE api_key='{}'".format(request.query.api_key))
     if db_profile_info[0] == 1:  # Case 'api_key is okay'
         update_query = exec_sql("UPDATE profiles SET profile_name='{}' WHERE api_key='{}'"
                                 .format(request.query.new_name, request.query.api_key))
-        if update_query[0] == 1:
+        if update_query[0] == 1 or db_profile_info[1][0]['profile_name'] == request.query.new_name:
             return json.dumps({'status': '200', 'profile_name': request.query.new_name})
         else:
             response.status = 500
