@@ -70,13 +70,24 @@ def change_name(api_key):
 
 
 def upload_photo(api_key):
-    file_url = input("Input image url: ")
-    try:
-        urllib.request.urlopen('http://localhost:8080/v1/upload_profile_image?api_key={}&file_url={}'
-                               .format(api_key, file_url)).read()
-        print("Your profile image is updated now!")
-    except urllib.error.HTTPError:
-        print('Bad HTTP response :(')
+    option = input("Do you want to upload from [w]eb, or from [c]omputer?")
+    if option == 'c':
+        file_path = input('Input path to your file: ')
+        req = urllib.request.Request("http://localhost:8080/v2/upload_profile_image?api_key=" + api_key)
+        with open(file_path, 'rb') as file:
+            req.data = file.read()
+        urllib.request.urlopen(req)
+        print('Your profile image is updated now!')
+    elif option == 'w':
+        file_url = input("Input image url: ")
+        try:
+            urllib.request.urlopen('http://localhost:8080/v1/upload_profile_image?api_key={}&file_url={}'
+                                   .format(api_key, file_url)).read()
+            print("Your profile image is updated now!")
+        except urllib.error.HTTPError:
+            print('Bad HTTP response :(')
+    else:
+        print('Invalid option...')
 
 
 print('This is test of ineraction with bottle_public_api.')

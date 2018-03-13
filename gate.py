@@ -1,11 +1,13 @@
 from bottle import route, run
 from api_methods.v1 import *
+from api_methods.v2 import *
 import config
 import logging
 
 
 # URL: http://config.server_host:config.server_port/<api_version>/<api_method>?<arg1>=...&<arg2>=...
-@route('/<api_version:re:v\d+>/<api_method:re:([a-z]+_?)+>')
+@route('/<api_version:re:v\d+>/<api_method:re:([a-z]+_?)+>', method='GET')
+@route('/<api_version:re:v\d+>/<api_method:re:([a-z]+_?)+>', method='POST')
 def meta_method(api_version, api_method):
     """ Meta-method
             Constructs method name from given api_version and api_method, and calls it if can.

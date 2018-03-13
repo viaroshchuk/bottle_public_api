@@ -219,7 +219,6 @@ def v1_get_profile_data():
 
 
 # http://config.server_host:config.server_port/v1/upload_avatar?api_key=..&file_url=..
-# TODO: Add possibility to upload image from PC
 def v1_upload_profile_image():
     """ Download image from given URL and mark it as profile photo, delete old image
     2 GET params:
@@ -275,7 +274,6 @@ def v1_upload_profile_image():
                 "UPDATE profiles SET profile_photo_url='{0}' WHERE api_key='{1}'"
                 .format(file_full_path, request.query.api_key)
             )
-            print(file_full_path, old_file_path, sep='\n')
             if update_query[0] == 1 or file_full_path == old_file_path:
                 # As new image successfully downloaded and it's path recorded in db, old one can be deleted
                 os.remove(old_file_path + '.backup')
