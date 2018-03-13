@@ -4,6 +4,10 @@ import urllib.error
 import urllib.parse
 import json
 
+server_host = 'localhost'
+server_port = 8080
+address = 'http://{}:{}/'.format(server_host, server_port)
+
 
 def register():
     print('[Registration]')
@@ -11,7 +15,7 @@ def register():
     password = getpass.getpass('Password: ')
     name = input('Your full name: ')
     try:
-        response = urllib.request.urlopen('http://localhost:8080/v1/register?login={}&password={}&name='
+        response = urllib.request.urlopen(address+'v1/register?login={}&password={}&name='
                                           .format(login, password) + urllib.parse.quote(name)).read()
 
         dict_response = json.loads(response.decode())
@@ -25,7 +29,7 @@ def auth():
     login = input('Login: ')
     password = getpass.getpass('Password: ')
     try:
-        response = urllib.request.urlopen('http://localhost:8080/v1/auth?login={}&password={}'
+        response = urllib.request.urlopen(address+'v1/auth?login={}&password={}'
                                           .format(login, password)).read()
         dict_response = json.loads(response.decode())
         print("You've successfully logged in!")
@@ -49,7 +53,7 @@ def login_or_register():
 def get_profile_data(api_key):
     profile_id = input('Enter profile id (leave empty to get your profile): ')
     try:
-        response = urllib.request.urlopen('http://localhost:8080/v1/get_profile_data?api_key={}&profile_id={}'
+        response = urllib.request.urlopen(address+'v1/get_profile_data?api_key={}&profile_id={}'
                                           .format(api_key, profile_id)).read()
         dict_response = json.loads(response.decode())
         print("[Profile data]")
@@ -62,7 +66,7 @@ def get_profile_data(api_key):
 def change_name(api_key):
     new_name = input("Enter new name: ")
     try:
-        response = urllib.request.urlopen('http://localhost:8080/v1/change_profile_name?api_key=' + api_key + '&new_name=' +
+        response = urllib.request.urlopen(address+'v1/change_profile_name?api_key=' + api_key + '&new_name=' +
                                urllib.parse.quote(new_name)).read()
         print("Your name is changed now!")
     except urllib.error.HTTPError:
@@ -81,7 +85,7 @@ def upload_photo(api_key):
     elif option == 'w':
         file_url = input("Input image url: ")
         try:
-            urllib.request.urlopen('http://localhost:8080/v1/upload_profile_image?api_key={}&file_url={}'
+            urllib.request.urlopen(address+'v1/upload_profile_image?api_key={}&file_url={}'
                                    .format(api_key, file_url)).read()
             print("Your profile image is updated now!")
         except urllib.error.HTTPError:
@@ -93,7 +97,7 @@ def upload_photo(api_key):
 def add_note(api_key):
     note = urllib.parse.quote(input("Note:\n"))
     try:
-        urllib.request.urlopen('http://localhost:8080/v1/add_note?api_key={}&content={}'.format(api_key, note))
+        urllib.request.urlopen(address+'v1/add_note?api_key={}&content={}'.format(api_key, note))
     except urllib.error.HTTPError:
         print('Bad HTTP response :(')
 

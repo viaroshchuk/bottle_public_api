@@ -31,7 +31,7 @@ class Query(graphene.ObjectType):
         if mysql_query.exec_sql("SELECT * FROM profiles WHERE id={}".format(id))[0]:
             return User(id=id)
         else:
-            print('There are no user in db with id' + str(id))
+            print('There are no user in db with id = ' + str(id))
             return None
 
 
