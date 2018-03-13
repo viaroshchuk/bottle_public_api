@@ -33,13 +33,21 @@ def v1_register():
         name
     Returns:
         200 = login
-        400 = Missing params/Login taken
+        400 = Missing params/Login taken/Invalid name
         500 = ???
     """
     if 'login' not in request.query or 'password' not in request.query or 'name' not in request.query:
         response.status = 400
         return json.dumps({'status': '400', 'error': 'Missing GET params, 3 needed (login, password, name).'})
-    # TODO: params validation
+
+    if len(request.query.name) < 3:
+        response.status = 400
+        json.dumps({'status': '400', 'error': 'Name must consist at least 3 chars.'})
+
+    if all(x.isalpha() or x.isspace() for x in request.query.name):
+        response.status = 400
+        json.dumps({'status': '400', 'error': 'Name must consist only of letters.'})
+
     login = request.query.login
 
     select_query = "SELECT id FROM profiles WHERE login='{}'".format(login)
