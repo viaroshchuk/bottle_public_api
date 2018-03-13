@@ -97,26 +97,32 @@ def add_note(api_key):
     except urllib.error.HTTPError:
         print('Bad HTTP response :(')
 
-print('This is test of ineraction with bottle_public_api.')
-api_key = login_or_register()
-print('You can try one of these commands:',
-      '[c]hange name',
-      '[g]et profile data (yours or others)',
-      '[u]pload photo to your profile (from website)',
-      'add [n]ote',
-      sep='\n\t')
-while True:
-    command = input('Type the key to choose command (c/g/u/n) or (q) to quit: ').lower()
-    if command == 'c':
-        change_name(api_key)
-    elif command == 'g':
-        get_profile_data(api_key)
-    elif command == 'u':
-        upload_photo(api_key)
-    elif command == 'n':
-        add_note(api_key)
-    elif command == 'q':
-        exit(0)
-    else:
-        print('Unknown command')
+
+def main():
+    print('This is test of ineraction with bottle_public_api.')
+    api_key = login_or_register()
+    print('You can try one of these commands:',
+          '[c]hange name',
+          '[g]et profile data (yours or others)',
+          '[u]pload photo to your profile (from website)',
+          'add [n]ote',
+          sep='\n\t')
+    while True:
+        command = input('Type the key to choose command (c/g/u/n) or (q) to quit: ').lower()
+        if command == 'c':
+            change_name(api_key)
+        elif command == 'g':
+            get_profile_data(api_key)
+        elif command == 'u':
+            upload_photo(api_key)
+        elif command == 'n':
+            add_note(api_key)
+        elif command == 'q':
+            exit(0)
+        else:
+            print('Unknown command')
+
+
+if __name__ == '__main__':
+    main()
 

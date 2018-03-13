@@ -26,16 +26,21 @@ def meta_method(api_version, api_method):
         return json.dumps({'status': '400', 'error': 'Wrong API version or method name.'})
 
 
-logging.basicConfig(
-    filename='api.log',
-    level=logging.INFO,
-    format="[%(asctime)s] %(message)s",
-    datefmt="%d.%m.%y|%H:%M:%S"
-)
+def main():
+    logging.basicConfig(
+        filename='api.log',
+        level=logging.INFO,
+        format="[%(asctime)s] %(message)s",
+        datefmt="%d.%m.%y|%H:%M:%S"
+    )
 
-# Create directory for profile photos if it doesn't exist
-if not os.path.isdir('content'):
-    os.mkdir('content')
-    logging.info('Created content directory.')
+    # Create directory for profile photos if it doesn't exist
+    if not os.path.isdir('content'):
+        os.mkdir('content')
+        logging.info('Created content directory.')
 
-run(host=config.server_host, port=config.server_port, debug=config.server_debug)
+    run(host=config.server_host, port=config.server_port, debug=config.server_debug)
+
+
+if __name__ == '__main__':
+    main()
