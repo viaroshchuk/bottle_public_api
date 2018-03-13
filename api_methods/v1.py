@@ -19,12 +19,9 @@ import json
         [PLANNED]v1_logout(): deletes api_key.
                             
 """
-# TODO: placeholders in sql queries
-# TODO: sql injection security
 
 
 # http://config.server_host:config.server_port/v1/register?login=..&password=..&name=..
-# TODO: name validation
 def v1_register():
     """ Add new user into profiles table
     3 GET params (all srt):
@@ -55,8 +52,8 @@ def v1_register():
     if exec_sql(select_query)[0] == 0:  # In case such login not found
         # password in db is sha256 hash
         pass_sha256 = hashlib.sha256(request.query.password.encode()).hexdigest()
-        insert_query = "INSERT INTO profiles (login, password, profile_name) VALUES ('{0}', '{1}', '{2}')".\
-            format(login, pass_sha256, request.query.name)
+        insert_query = "INSERT INTO profiles (login, password, profile_name) VALUES ('{0}', '{1}', '{2}')"\
+            .format(login, pass_sha256, request.query.name)
         if exec_sql(insert_query)[0] == 1:
             return json.dumps({'status': '200', 'login': login})
         else:
@@ -99,7 +96,7 @@ def v1_auth():
         if db_pass == hashlib.sha256(password.encode()).hexdigest():  # If passwords match
             # Generate api_key and then write it into db
             api_key = hashlib.sha256((str(datetime.datetime.now()) + login).encode()).hexdigest()
-            insert_query = exec_sql("UPDATE profiles SET api_key='" + api_key + "' WHERE login = '" + login + "'")
+            insert_query = exec_sql("UPDATE profiles SET api_key='{}' WHERE login = '{}'".format(api_key, login))
 
             if insert_query[0] == 1:
                 response.add_header("Authentication", api_key)
@@ -113,8 +110,6 @@ def v1_auth():
 
 
 # http://config.server_host:config.server_port/v1/change_name?api_key=..&new_name=..
-# TODO: (maybe) add new param - password
-# TODO: api_key validation (length)
 def v1_change_profile_name():
     """ Change profile_name for authenticated client
     2 GET params:
@@ -142,9 +137,10 @@ def v1_change_profile_name():
         response.status = 400
         json.dumps({'status': '400', 'error': 'Name must consist only of letters.'})
 
-    db_profile_info = exec_sql("SELECT * FROM profiles WHERE api_key='" + request.query.api_key + "'")
+    db_profile_info = exec_sql("SELECT * FROM profiles WHERE api_key='{}'".format(request.query.api_key))
     if db_profile_info[0] == 1:  # Case 'api_key is okay'
-        update_query = exec_sql("UPDATE profiles SET profile_name='" + request.query.new_name + "' WHERE api_key='" + request.query.api_key + "'")
+        update_query = exec_sql("UPDATE profiles SET profile_name='{}' WHERE api_key='{}'"
+                                .format(request.query.new_name, request.query.api_key))
         if update_query[0] == 1:
             return json.dumps({'status': '200', 'profile_name': request.query.new_name})
         else:
@@ -180,7 +176,7 @@ def v1_get_profile_data():
         response.status = 401
         return json.dumps({'status': '401', 'error': 'This method requires authentication.'})
 
-    db_profile_info = exec_sql("SELECT * FROM profiles WHERE api_key='" + request.query.api_key + "'")
+    db_profile_info = exec_sql("SELECT * FROM profiles WHERE api_key='{}'".format(request.query.api_key))
 
     if db_profile_info[0] == 1:  # Case 'api_key is ok'
         if 'profile_id' not in request.query or request.query.profile_id.strip() == '':
@@ -244,7 +240,7 @@ def v1_upload_profile_image():
         response.status = 400
         return json.dumps({'status': '400', 'error': 'Missing file_url param.'})
 
-    db_profile_info = exec_sql("SELECT * FROM profiles WHERE api_key='" + request.query.api_key + "'")
+    db_profile_info = exec_sql("SELECT * FROM profiles WHERE api_key='{}'".format(request.query.api_key))
 
     if db_profile_info[0] == 1:  # Case 'api_key is ok'
         # Make old file backuo(if exists) to delete it later
