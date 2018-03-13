@@ -1,9 +1,11 @@
 # TODO: Add sql injection check
 import pymysql.cursors
 import config
+import logging
 
 
 def exec_sql(sql_query):
+    logging.info("SQL query: {}".format(sql_query))
     connection = pymysql.connect(
         host=config.db_host,
         user=config.db_user,
@@ -17,7 +19,7 @@ def exec_sql(sql_query):
         try:
             return cursor.execute(sql_query), cursor.fetchall()
         except:
-            print("Can't execute sql query for some reason")
+            logging.error("Error while executing query: {}".format(sql_query))
             return None
         finally:
             connection.close()
