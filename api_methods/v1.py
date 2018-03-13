@@ -292,3 +292,35 @@ def v1_upload_profile_image():
     else:  # Case 'Duplicate profiles'
         response.status = 500
         return json.dumps({'status': '500', 'error': 'Found few profiles with given api_key.'})
+
+
+# http://config.server_host:config.server_port/v1/add_note?api_key=..&content=..
+def v1_add_note():
+    if 'api_key' not in request.query:
+        response.status = 401
+        return json.dumps({'status': '401', 'error': 'This method requires authentication.'})
+
+    if 'content' not in request.query:
+        response.status = 400
+        return json.dumps({'status': '400', 'error': 'Empty note.'})
+    elif request.query.content.strip() == '':
+        response.status = 400
+        return json.dumps({'status': '400', 'error': 'Empty note.'})
+
+    db_profile_info = exec_sql("SELECT id FROM profiles WHERE api_key='{}'".format(request.query.api_key))
+
+    if db_profile_info[0] == 1:  # Case 'api_key is ok'
+        user_id = db_profile_info[1][0]['id']
+        insert_query = exec_sql("INSERT INTO notes (content, user_id) VALUES ('{}', {})"
+                                .format(request.query.content, user_id))
+        if insert_query[0] == 1:
+            return json.dumps({'status': '200'})
+        else:
+            response.status = 500
+            return json.dumps({'status': '500', 'error': 'Too much affected rows, during insertion of note.'})
+    elif db_profile_info[0] == 0:
+        response.status = 401
+        return json.dumps({'status': '401', 'error': 'Wrong api_key.'})
+    else:
+        response.status = 500
+        return json.dumps({'status': '500', 'error': 'Found few profiles with given api_key.'})
