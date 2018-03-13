@@ -5,7 +5,7 @@
 3. Edit config.py
 4. Edit server address in sample_app/app.py (7-9 row)
 -----------------------------------------------
-gate.py - api server
-sample_app/app.py - test application that works with API
-graph.py - graphene task
++ gate.py - API server
++ sample_app/app.py - test application that works with API
++ graph.py - graphene task
 
